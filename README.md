@@ -3,8 +3,7 @@ This is a parsing library in the spirit of Haskell's parsec.  For example:
 ``` elisp
 (pl-parse
   (delete-region (pl-str "<xml>" :beg)
-                 (progn
-                   (pl-anything)
+                 (pl-until
                    (pl-str "</xml>" :end))))
 ```
 
