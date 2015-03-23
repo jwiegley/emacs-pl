@@ -88,7 +88,7 @@
 (defmacro pl-try (&rest forms)
   `(catch 'failed ,@forms))
 
-(defalias 'pl-and 'pl-try)
+(defalias 'pl-and 'progn)
 (defalias 'pl-parse 'pl-try)
 
 (defmacro pl-until (parser &optional &key skip)
