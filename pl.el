@@ -35,11 +35,6 @@
   "Combinator parsing library for Emacs, similar to Haskell's Parsec"
   :group 'development)
 
-(defmacro pl-try (&rest forms)
-  `(catch 'failed ,@forms))
-
-(defalias 'pl-parse 'pl-try)
-
 (defun pl-ch (ch &rest args)
   (if (char-equal (char-after) ch)
       (prog1
@@ -90,13 +85,11 @@
            (catch 'failed
              (return-from ,outer-sym (eval ,parser-sym))))))
 
-(defmacro pl-and (&rest parsers)
-  (let ((result-sym (make-symbol "result"))
-        (parser-sym (make-symbol "parser")))
-    `(let (,result-sym)
-       (loop for ,parser-sym in ',parsers do
-             (setq ,result-sym (eval ,parser-sym)))
-       ,result-sym)))
+(defmacro pl-try (&rest forms)
+  `(catch 'failed ,@forms))
+
+(defalias 'pl-and 'pl-try)
+(defalias 'pl-parse 'pl-try)
 
 (defmacro pl-until (parser &optional &key skip)
   `(catch 'done
@@ -106,6 +99,21 @@
        ,(if skip
             `(,skip 1)
           `(forward-char 1)))))
+
+(defmacro pl-many (&rest parsers)
+  (let ((final-sym (make-symbol "final"))
+        (result-sym (make-symbol "result"))
+        (parsers-sym (make-symbol "parsers")))
+    `(let ((,parsers-sym ',parsers)
+           ,result-sym
+           ,final-sym)
+       (while (and ,parsers-sym
+                   (setq ,result-sym
+                         (catch 'failed
+                           (list (eval (car ,parsers-sym))))))
+         (push (car ,result-sym) ,final-sym)
+         (setq ,parsers-sym (cdr ,parsers-sym)))
+       (nreverse ,final-sym))))
 
 (provide 'pl)
 
