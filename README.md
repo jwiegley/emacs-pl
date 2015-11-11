@@ -15,7 +15,7 @@ buffer position, and return zero or more details regarding what was found:
     pl-re                Match a regular expression
     pl-num               Match an integer or floating-point number
 
-Other possibilities include: inspecting text propertis, overlays, etc.
+Other possibilities include: inspecting text properties, overlays, etc.
 
 If the parser succeeds, it returns the object matched (a string by default),
 and advances point to the next position after the match.  Keywords may be
@@ -37,7 +37,7 @@ makes it possible to build certain combinators out of these few parts:
                          one character and try again.  Keywords can
                          change the advance amount.
 
-For other constructs, like return the result of every parser as a list, just
+For other constructs, such as returning the result of every parser as a list, just
 combine parsers with regular Lisp forms (`pl-parse` is just a synonym for
 `pl-try`):
 
